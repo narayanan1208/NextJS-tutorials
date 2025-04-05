@@ -1,10 +1,23 @@
 import { revalidatePath } from "next/cache";
+import { auth, currentUser } from "@clerk/nextjs/server";
+
 type MockUser = {
   id: number;
   name: string;
 };
 
 const MockUsers = async () => {
+  const authObj = await auth();
+  const userObj = await currentUser();
+
+  if (!authObj || !userObj) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <h1 className="text-2xl font-bold">You are not logged in</h1>
+      </div>
+    );
+  }
+
   const res = await fetch("https://67f10e70c733555e24ac0a17.mockapi.io/users");
   const users = await res.json();
 
